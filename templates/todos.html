@@ -1,0 +1,56 @@
+{% for i in todos.items %}
+    <div class="row d-flex justify-content-center" style="border:5px solid #ffffff;border-radius:10px;margin:5px;color:#ffbf00;background-color:#808080;display:inline-block;">
+        <div class="col-sm-2">
+            <button type="button" style = "margin:30px;border:2px solid #000000;color:#000000;" value="{{ url_for('edit_todos',id=i.id) }}" class="doneButton btn {% if i.is_completed %} disabled btn-success{% else %}btn-danger {% endif %}">{% if i.is_completed %}Done{% else %}Pending{% endif %}</button> 
+        </div>
+        <div class="col-sm-4 {% if i.is_completed %} text-muted {% endif %}">
+            <h4>{{ i.title }}</h4>
+            <p style="size:small;">{{ i.notes }}</p>
+            <p class="text-dark" style="margin">{{ i.created_at.strftime("%I:%M:%S %p || %d %b, %Y") }}</p>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" style = "margin:30px;" value="{{ url_for('delete_todos',id=i.id) }}" class="deleteButton btn"><img class="img-fluid float-right" src="https://img.icons8.com/external-kiranshastry-solid-kiranshastry/64/000000/external-delete-miscellaneous-kiranshastry-solid-kiranshastry.png" width="32" height="32"/></button> 
+        </div>
+    </div>
+{% endfor %}
+<script type="text/javascript">
+    $('.doneButton').click(function(){
+        var link = $(this).val();
+        $.ajax({
+            url: link,
+            type: 'PATCH',
+            data: {
+                is_completed:true,
+            },
+            success: function(data){
+                $('#footer').append(get_alert('Marked as completed!'));
+                $.ajax({
+                    url: "{{ url_for('get_todos',page=page) }}",
+                    type: 'GET',
+                    success: function(data){
+                        $('#values').html(data);
+                    }
+                });
+            }
+        });
+    });
+    $('.deleteButton').click(function(){
+        var link = $(this).val();
+        $.ajax({
+            url: link,
+            type: 'DELETE',
+            success: function(data){
+                $('#footer').append(get_alert('Deleted!'));
+                $.ajax({
+                    url: "{{ url_for('get_todos',page=page) }}",
+                    type: 'GET',
+                    success: function(data){
+                        $('#values').html(data);
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+{% endif %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">    
+    {% if 'uid' not in request.cookies %}
+    <div class="justify-content-center">
+        <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text">@</div>
+            </div>
+            <input type="text" class="form-control" id="uid" placeholder="Add User ID">
+        </div>
+        <input type="button" class="btn btn-success" id="send" value="Get To-dos" onclick="set_uid">
+    </div>
+    <hr>
+    {% else %}
+    <div id="div_create">
+        <form id="create" action="">
+            <input type="text" id="title" placeholder="Add title"><br>
+            <input type="text" id="notes" placeholder="Add Notes"><br>
+            <input type="submit" value="Create"><br>
+        </form>
+    </div>
+    <hr>
+    <div id="result">
+        <div class="container" id="values">
+
+        </div>
+        <hr>
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination">
+                {% for i in pages %}
+                    <li class="page-item"><button class="page-link" value="{{ url_for('get_todos',page=i) }}">{{i}}</button></li>
+                {% endfor %}
+            </ul>
+        </nav>  
+    </div>
+    {% endif %}
+
+
+</div>
+
+
+<script type="text/javascript">
+    function get_alert(text){ 
+        return '<div class="alert alert-success alert-dismissible fade show" role="alert">' +text+ '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+    }
+    $(document).ready(function fetch_todos(){
+        $("#signout").click(function(){
+            Cookies.remove('uid');
+            window.location.reload();
+          });
+        $('.alert').alert("close");
+        $('.page-link').click(
+            function(){
+                var link = this.getAttribute('value');
+                $.ajax({
+                    url: link,
+                    type: 'GET',
+                    success: function(data){
+                        $('#values').html(data);
+                    }
+                });
+            }
+        );
+        $('#send').click(function(){
+            var uid = $('#uid').val();
+            if (uid=='') {
+                $('#footer').append(get_alert('Please enter your user id'));
+            }else{
+                Cookies.set('uid', uid, { expires: 7 });
+                $('#footer').append(get_alert('User Id Set'));
+                window.location.reload();
+            }
+        });
+        $("#create").submit(function(e){
+            e.preventDefault();
+            var title = $("#title").val();
+            var notes = $("#notes").val();
+            $.ajax({
+                url: "{{ url_for('create_todos') }}",
+                type: "POST",
+                data: {title: title, notes: notes},
+                success: function(data){
+                    if(data.success == true){
+                        $('#footer').append(get_alert("Note created successfully"));  
+                        $.ajax({
+                            url: "{{ url_for('get_todos',page=page) }}",
+                            type: 'GET',
+                            success: function(data){
+                                $('#values').html(data);
+                            }
+                        });
+                    }
+                    else{
+                        $('#footer').append(get_alert("Error"));
+                    }
+                }
+            });
+        });
+        $.ajax({
+            url: "{{ url_for('get_todos',page=1) }}",
+            type: 'GET',
+            success: function(data){
+                console.log(data);
+                if(data==''){
+                    $('#values').html('<h1>You have not created any todos</h1><h3>Go Ahead And Create your first one!</h3>');
+                }else{
+                $('#values').html(data);}
+            }
+        });
+    });
+
+</script>
+{% endblock %}

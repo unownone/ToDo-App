@@ -1,0 +1,41 @@
+Todo App:
+Frameworks:
+Flask login , jwt{maybe} , mongoengine {orm+mongo client} , flask , notifs if possible so : flask-notifications , flask-mail,celery
+
+
+Front:
+Pagination : 
+ajax 
+Bootstrap 
+jquery 
+basic animations
+
+Back:
+MongoDB
+Flask
+Login - logout 
+background tasks
+
+Functions:
+    - Adding items
+    - Deleting items
+    - Editing items
+    - Marking items as done
+
+Model to be used:
+    User_auth-
+        - username
+        - password
+        - email
+    todo-
+        -creation_date
+        -completed
+        -name
+        -notes
+
+Use Extend for reuse
+
+**Add Pagination
+**Add User Login
+**User Authentication
+**Use Bootstrap
