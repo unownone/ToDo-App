@@ -35,12 +35,14 @@ class Todos(db.Document):
             '_id':str(self.pk)
         }
 
+
+
+
 @app.route('/',methods=['GET'])
 def index():
     try:
-        lenn = Todos.objects.filter(uid=request.cookies.get('uid'))
-        print(len(lenn),math.ceil(len(lenn)/10)+1)
-        pages=list(range(1,math.ceil(len(lenn)/10)+1))
+        lenn = Todos.objects.filter(uid=request.cookies.get('uid')).count()
+        pages=list(range(1,math.ceil(lenn/10)+1))
         print(pages)
         return render_template('index.html',title='home',uid=request.cookies.get('uid',None),pages=pages,page=Values.CURR_PAGE)
     except:
