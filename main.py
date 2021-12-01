@@ -5,7 +5,7 @@ import string,random
 from flask_mongoengine import MongoEngine
 from datetime import datetime
 import traceback,math
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 app = Flask(__name__)
 #DB CONFIG
 app.config['MONGODB_HOST'] = config('DBURI')
@@ -16,7 +16,7 @@ db = MongoEngine(app)
 @dataclass
 class Values:
     CURR_PAGE:int = 1
-
+    TOT_PAGE:int = 1
 
 class Todos(db.Document):
     title = db.StringField(required=True,unique=False)
@@ -41,13 +41,10 @@ class Todos(db.Document):
 @app.route('/',methods=['GET'])
 def index():
     try:
-        lenn = Todos.objects.filter(uid=request.cookies.get('uid')).count()
-        pages=list(range(1,math.ceil(lenn/10)+1))
-        print(pages)
-        return render_template('index.html',title='home',uid=request.cookies.get('uid',None),pages=pages,page=Values.CURR_PAGE)
+        return render_template('index.html',title='home',uid=request.cookies.get('uid',None),page=Values.CURR_PAGE)
     except:
         print(traceback.format_exc())
-        return render_template('index.html',title='home',uid=request.cookies.get('uid',None),pages=[],page=Values.CURR_PAGE)
+        return render_template('index.html',title='home',uid=request.cookies.get('uid',None),page=Values.CURR_PAGE)
 
 
 
@@ -95,9 +92,15 @@ def delete_todos(id:str):
 @app.route('/todos/get/<int:page>',methods=['GET'])
 def get_todos(page:int=1):
     try:
+        # if (10*(page-1))%100 == 0:
+        #     print(Todos.objects(uid=request.cookies.get('uid')).order_by('-created_at').paginate(per_page=100,page=page))
+        #     page_count = len(Todos.objects(uid=request.cookies.get('uid')).order_by('-created_at').paginate(per_page=100,page=page).items())
+        #     Values.FETCH_PAGE = [i for i in range(page,(page_count//10)+1)]
         tod:Todos = Todos.objects(uid=request.cookies.get('uid')).order_by('-created_at').paginate(per_page=10,page=page)
+        Values.TOT_PAGE = tod.pages
         Values.CURR_PAGE = page
-        return render_template('todos.html',todos=tod,page=Values.CURR_PAGE)
+        pages = [i for i in range(1,tod.pages+1)]
+        return render_template('todos.html',todos=tod,page=Values.CURR_PAGE,pages=pages)
     except:
         print(traceback.format_exc())
         return jsonify(success=False)

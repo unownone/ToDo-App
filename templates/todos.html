@@ -13,7 +13,27 @@
         </div>
     </div>
 {% endfor %}
+<hr>
+<nav aria-label="Page navigation example" class="d-flex justify-content-center">
+    <ul class="pagination">
+        {% for i in pages %}
+            <li class="page-item"><button class="page-link" value="{{ url_for('get_todos',page=i) }}">{{i}}</button></li>
+        {% endfor %}
+    </ul>
+</nav> 
 <script type="text/javascript">
+    $('.page-link').click(
+        function(){
+            var link = this.getAttribute('value');
+            $.ajax({
+                url: link,
+                type: 'GET',
+                success: function(data){
+                    $('#values').html(data);
+                }
+            });
+        }
+    );
     $('.doneButton').click(function(){
         var link = $(this).val();
         $.ajax({

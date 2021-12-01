@@ -25,14 +25,7 @@
         <div class="container" id="values">
 
         </div>
-        <hr>
-        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-            <ul class="pagination">
-                {% for i in pages %}
-                    <li class="page-item"><button class="page-link" value="{{ url_for('get_todos',page=i) }}">{{i}}</button></li>
-                {% endfor %}
-            </ul>
-        </nav>  
+ 
     </div>
     {% endif %}
 
