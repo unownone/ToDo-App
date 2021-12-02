@@ -53,7 +53,8 @@ def index():
 def create_todos():
     req = dict(request.form)
     try:
-        print(req)
+        if req.get('title') == '':
+            return jsonify(message='Title is required'),403
         tod = Todos(**req,uid=request.cookies.get('uid')).save()
         return jsonify(success=True)
     except:

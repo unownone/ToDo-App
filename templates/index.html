@@ -7,16 +7,19 @@
             <div class="input-group-prepend">
               <div class="input-group-text">@</div>
             </div>
-            <input type="text" class="form-control" id="uid" placeholder="Add User ID">
+            <input type="text" class="form-control" id="uid" placeholder="Add User ID" required="true">
         </div>
         <input type="button" class="btn btn-success" id="send" value="Get To-dos" onclick="set_uid">
     </div>
     <hr>
     {% else %}
     <div id="div_create">
-        <form id="create" action="">
-            <input type="text" id="title" placeholder="Add title"><br>
-            <input type="text" id="notes" placeholder="Add Notes"><br>
+        <form id="create" class="form-horizontal" role="form" action="">
+            <input class="form-control form-control-lg" type="text" id="title" name="title" placeholder="Title of your to-do" required="true"><br>
+            <div class="form-group">
+                <label for="notes">Notes:</label>
+                <textarea class="form-control rounded-0" id="notes" name="notes"  rows="3"></textarea>
+              </div>
             <input type="submit" value="Create"><br>
         </form>
     </div>
@@ -87,6 +90,9 @@
                     else{
                         $('#footer').append(get_alert("Error"));
                     }
+                }
+                error: function(data){
+                    $('#footer').append(get_alert(data.message));
                 }
             });
         });
