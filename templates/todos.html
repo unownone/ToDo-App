@@ -1,4 +1,5 @@
 {% for i in todos.items %}
+    {{i.uid}}
     <div class="row d-flex justify-content-center" style="border:5px solid #ffffff;border-radius:10px;margin:5px;{% if i.is_completed %}color:#2a0656;background-color:#4d6f4d{% else %}color:#ffbf00;background-color:#808080{% endif %};display:inline-block;">
         <div class="col-sm-2">
             <button type="button" style = "margin:30px;border:2px solid #000000;color:#000000;" value="{{ url_for('edit_todos',id=i.id) }}" class="doneButton btn {% if i.is_completed %} disabled btn-success{% else %}btn-danger {% endif %}">{% if i.is_completed %}Done{% else %}Pending{% endif %}</button> 

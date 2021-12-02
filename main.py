@@ -6,6 +6,7 @@ from flask_mongoengine import MongoEngine
 from datetime import datetime
 import traceback,math
 from dataclasses import dataclass,field
+import bson
 app = Flask(__name__)
 #DB CONFIG
 app.config['MONGODB_HOST'] = config('DBURI')
@@ -67,8 +68,7 @@ def edit_todos(id:str):
     if 'is_completed' in req:
         req['is_completed']=True if req['is_completed']=='true' else False 
     try:
-        tod = Todos.objects.first_or_404({'_id':id})
-        print(tod.to_json())
+        tod = Todos.objects(id=id).first()
         tod.update(**req)
         return jsonify(success=True)
     except:
@@ -81,7 +81,8 @@ def edit_todos(id:str):
 @app.route('/todos/delete/<string:id>',methods=['DELETE'])
 def delete_todos(id:str):
     try:
-        tod = Todos.objects.first_or_404({'_id':id})
+        print(id)
+        tod = Todos.objects(id=id).first()
         tod.delete()
         return jsonify(success=True)
     except:
